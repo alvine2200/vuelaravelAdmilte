@@ -21,7 +21,6 @@
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                 data-accordion="false">
-
                 {{-- <li class="nav-item menu-open">
                     <a href="#" class="nav-link active">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -46,16 +45,40 @@
                     </ul>
                 </li> --}}
                 <li class="nav-item">
-                    <a href="/admin/dashboard" class="nav-link">
+                    <router-link to="/admin/dashboard" active-class="active" class="nav-link">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>Dashboard </p>
-                    </a>
+                    </router-link>
                 </li>
                 <li class="nav-item">
-                    <a href="/admin/dashboard" class="nav-link">
+                    <router-link to="/admin/appointments" active-class="active" class="nav-link">
                         <i class="nav-icon fas fa-calendar-alt"></i>
                         <p> Appointments </p>
-                    </a>
+                    </router-link>
+                </li>
+                <li class="nav-item">
+                    <router-link to="/admin/users" active-class="active" class="nav-link">
+                        <i class="nav-icon fas fa-users"></i>
+                        <p> Users </p>
+                    </router-link>
+                </li>
+                <li class="nav-item">
+                    <router-link to="/admin/settings" active-class="active" class="nav-link">
+                        <i class="nav-icon fas fa-cog"></i>
+                        <p> Settings </p>
+                    </router-link>
+                </li>
+                <li class="nav-item">
+                    <router-link to="/admin/profile" active-class="active" class="nav-link">
+                        <i class="nav-icon fas fa-user-alt"></i>
+                        <p> Profile </p>
+                    </router-link>
+                </li>
+                <li class="nav-item">
+                    <router-link to="/admin/logout" active-class="active" class="nav-link">
+                        <i class="nav-icon fas fa-sign-out-alt"></i>
+                        <p> Logout </p>
+                    </router-link>
                 </li>
             </ul>
         </nav>
