@@ -17,10 +17,8 @@
 <body class="hold-transition sidebar-mini">
     <div class="wrapper">
 
-        @include('admin.header')
-
-
-        @include('admin.sidebar')
+        @include('admin.layouts.header')
+        @include('admin.layouts.sidebar')
 
         <div class="content-wrapper">
             <div class="content-header">
@@ -101,7 +99,6 @@
 
         </div>
 
-
         <aside class="control-sidebar control-sidebar-dark">
 
             <div class="p-3">
@@ -109,7 +106,7 @@
                 <p>Sidebar content</p>
             </div>
         </aside>
-        @include('admin.footer')
+        @include('admin.layouts.footer')
     </div>
 </body>
 
