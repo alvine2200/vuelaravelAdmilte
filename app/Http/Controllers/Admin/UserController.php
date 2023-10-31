@@ -17,12 +17,6 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:100',
-            'email' => 'required|string|max:100',
-            'password' => 'required|string',
-        ]);
-
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -35,6 +29,17 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::find($id);
+        return $user;
+    }
+
+    public function update(User $user, Request $request)
+    {
+        $user->update([
+            'name' => $request('name'),
+            'email' => $request('email'),
+            'password' => $request('password') ? Hash::make($request('password')) : null,
+        ]);
+
         return $user;
     }
 }
