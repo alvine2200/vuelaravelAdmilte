@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\User;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\UserResource;
+use App\Http\Controllers\Api\BaseController;
 
-class UserController extends Controller
+class UserController extends BaseController
 {
     public function index()
     {
