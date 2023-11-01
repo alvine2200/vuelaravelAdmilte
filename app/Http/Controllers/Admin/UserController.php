@@ -47,7 +47,6 @@ class UserController extends Controller
             'email' => $request->email,
         ]);
 
-
         return $user;
     }
 }
