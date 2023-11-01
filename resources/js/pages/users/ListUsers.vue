@@ -43,17 +43,24 @@ const adduser = () => {
 }
 
 //handle form submission
-const handleSubmit = (values) => {
-  editing.value ? updateUser(values) : createUser(values);
+const handleSubmit = (values, actions) => {
+  editing.value ? updateUser(values, actions) : createUser(values, actions);
 }
 // create user
-const createUser = (values) => {
+const createUser = (values, { resetForm, setErrors }) => {
   axios.post('/api/users', values)
     .then((response) => {
       users.value.unshift(response.data);
       $('#userFormModal').modal('hide');
       toastr.success("User added successfully");
-      form.value.resetForm();
+      resetForm();
+    })
+    .catch((error) => {
+      if (error.response.data.errors) {
+        setErrors(error.response.data.errors);
+        return;
+      }
+      toastr.error("Unknow Validation Error occurred");
     });
 }
 
@@ -68,26 +75,27 @@ const editUser = (user) => {
   }
 }
 
-const updateUser = (values) => {
+const updateUser = (values, { setErrors }) => {
   axios.put('/api/users/' + formValues.value.id, values)
     .then((response) => {
       const index = users.value.findIndex(user => user.id === response.data.id);
       users.value[index] = response.data;
       $('#userFormModal').modal('hide');
       toastr.success("User updated successfully");
+      return;
     })
     .catch((error) => {
-      console.log(error);
+      if (error.response.data.errors) {
+        setErrors(error.response.data.errors);
+        return;
+      }
+      toastr.error("Unknow Validation Error occurred");
     })
-    .finally(() => {
-      form.value.resetForm();
-    });
 }
 
 
 onMounted(() => {
   getUsers();
-  toastr.info('success');
 });
 </script>
 
