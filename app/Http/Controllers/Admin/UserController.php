@@ -18,7 +18,9 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'email' => 'required|unique:users,email'
+            'name' => 'required|string',
+            'email' => 'required|unique:users,email',
+            'password' => 'required|min:8|string',
         ]);
 
         $user = User::create([
@@ -39,7 +41,9 @@ class UserController extends Controller
     public function update(User $user, Request $request)
     {
         $request->validate([
+            'name' => 'required|string',
             'email' => 'required|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8',
         ]);
         if ($request->password) {
             $user->update([
@@ -55,5 +59,11 @@ class UserController extends Controller
         ]);
 
         return $user;
+    }
+
+    public function delete(User $user)
+    {
+        $user->delete();
+        return response()->noContent();
     }
 }

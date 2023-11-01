@@ -11,6 +11,7 @@ const users = ref([]);
 const editing = ref(false);
 const formValues = ref();
 const form = ref(null);
+const userIdBeingDeleted = ref(null);
 
 // validate fields create user
 const createUserSchema = yup.object({
@@ -89,10 +90,31 @@ const updateUser = (values, { setErrors }) => {
         setErrors(error.response.data.errors);
         return;
       }
-      toastr.error("Unknow Validation Error occurred");
+      toastr.error("Unknown Validation Error occurred");
     })
 }
 
+const showDeleteUserModal = (user) => {
+  userIdBeingDeleted.value = user.id;
+  $('#deleteUserModal').modal('show');
+}
+
+const deleteUser = () => {
+  axios.delete(`/api/users/${userIdBeingDeleted.value}`)
+    .then(() => {
+      $('#deleteUserModal').modal('hide');
+      users.value = users.value.filter(user => user.id !== userIdBeingDeleted.value)
+      toastr.success("User deleted successfully!");
+      return;
+    })
+    .catch((error) => {
+      toastr.error("Unknown Error occurred on delete");
+    });
+}
+
+const hideDeleteUserModal = () => {
+  $('#deleteUserModal').modal('hide');
+}
 
 onMounted(() => {
   getUsers();
@@ -145,7 +167,8 @@ onMounted(() => {
                   <td></td>
                   <td></td>
                   <td>
-                    <a @click.prevent="editUser(user)"><i class="fa fa-edit"></i></a>
+                    <a @click.prevent="editUser(user)"><i class="fa fa-edit mr-2"></i></a>
+                    <a @click.prevent="showDeleteUserModal(user)"><i class="fa fa-trash"></i></a>
                   </td>
                 </tr>
               </tbody>
@@ -194,6 +217,29 @@ onMounted(() => {
             <button type="submit" class="btn btn-primary">Submit</button>
           </div>
         </Form>
+      </div>
+    </div>
+  </div>
+
+  <!-- modal for deleting user -->
+  <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">
+            <span>Delete User</span>
+          </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h5>Are You Sure You Want To Delete This? </h5>
+        </div>
+        <div class="modal-footer">
+          <button @click.prevent="hideDeleteUserModal" class="btn btn-secondary" type="button">Close</button>
+          <button @click.prevent="deleteUser" class="btn btn-primary" type="button">Delete</button>
+        </div>
       </div>
     </div>
   </div>
