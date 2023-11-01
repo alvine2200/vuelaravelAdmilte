@@ -21,7 +21,7 @@ const editUserSchema = yup.object({
   name: yup.string().required(),
   email: yup.string().email().required(),
   password: yup.string().when((password, schema) => {
-    return password ? schema.required().min(8) : schema;
+    return password ? schema.min(8) : schema;
   }),
 });
 
@@ -40,8 +40,8 @@ const adduser = () => {
 }
 
 //handle form submission
-const handleSubmit = () => {
-  editing.value ? updateUser() : createUser();
+const handleSubmit = (values) => {
+  editing.value ? updateUser(values) : createUser(values);
 }
 // create user
 const createUser = (values) => {
@@ -103,7 +103,8 @@ onMounted(() => {
   <div class="content">
     <div class="container-fluid">
       <div class="button mx-3 mb-3 row">
-        <button class="btn btn-primary float-end" @click="adduser"><i class="fas fa-plus-circle"></i> Add New User
+        <button type="button" class="btn btn-primary float-end" @click="adduser"><i class="fas fa-plus-circle"></i> Add
+          New User
         </button>
       </div>
       <div class="card">

@@ -34,11 +34,19 @@ class UserController extends Controller
 
     public function update(User $user, Request $request)
     {
+        if ($request->password) {
+            $user->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
+        }
+
         $user->update([
-            'name' => $request('name'),
-            'email' => $request('email'),
-            'password' => $request('password') ? Hash::make($request('password')) : null,
+            'name' => $request->name,
+            'email' => $request->email,
         ]);
+
 
         return $user;
     }
