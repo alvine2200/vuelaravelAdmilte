@@ -11,13 +11,24 @@ defineProps({
 
 const toastr = useToastr();
 const userIdBeingDeleted = ref(null);
-const emit = defineEmits(['userDeleted']);
-
+const emit = defineEmits(['userDeleted', 'editUser']);
+const roles = ref([
+    {
+        name: 'ADMIN',
+        value: 1,
+    }, {
+        name: 'USER',
+        value: 2,
+    }
+])
 
 const showDeleteUserModal = (user) => {
     userIdBeingDeleted.value = user.id;
-    console.log('userIdBeingDeleted value:', userIdBeingDeleted.value);
     $('#deleteUserModal').modal('show');
+}
+
+const editUser = (user) => {
+    emit('editUser', user);
 }
 
 const deleteUser = (user) => {
@@ -33,6 +44,17 @@ const hideDeleteUserModal = () => {
     $('#deleteUserModal').modal('hide');
 }
 
+
+const changeRole = (user, role) => {
+    axios.patch('/api/users/' + user.id + '/change_role', {
+        role: role,
+    }).then((response) => {
+        toastr.success('User Role Changed successfully');
+    }).catch((error) => {
+        toastr.error('Role change failed, something went wrong');
+    });
+}
+
 </script>
 
 <template>
@@ -41,7 +63,12 @@ const hideDeleteUserModal = () => {
         <td>{{ user.name }}</td>
         <td>{{ user.email }}</td>
         <td>{{ formatDate(user.created_at) }}</td>
-        <td>{{ user.role }}</td>
+        <td>
+            <select class="form-control" @change="changeRole(user, $event.target.value)">
+                <option v-for="role in roles" :value="role.value" :selected="user.role === role.name">{{ role.name }}
+                </option>
+            </select>
+        </td>
         <td>
             <a @click.prevent="editUser(user)"><i class="fa fa-edit mr-2"></i></a>
             <a @click.prevent="showDeleteUserModal(user)"><i class="fa fa-trash"></i></a>

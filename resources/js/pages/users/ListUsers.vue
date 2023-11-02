@@ -64,17 +64,6 @@ const createUser = (values, { resetForm, setErrors }) => {
     });
 }
 
-const editUser = (user) => {
-  editing.value = true;
-  form.value.resetForm();
-  $('#userFormModal').modal('show');
-  formValues.value = {
-    id: user.id,
-    name: user.name,
-    email: user.email,
-  }
-}
-
 const updateUser = (values, { setErrors }) => {
   axios.put('/api/users/' + formValues.value.id, values)
     .then((response) => {
@@ -91,6 +80,17 @@ const updateUser = (values, { setErrors }) => {
       }
       toastr.error("Unknown Validation Error occurred");
     })
+}
+
+const editUser = (user) => {
+  editing.value = true;
+  form.value.resetForm();
+  $('#userFormModal').modal('show');
+  formValues.value = {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+  }
 }
 
 const userDeleted = (userId) => {
@@ -142,7 +142,7 @@ onMounted(() => {
               </thead>
               <tbody>
                 <UserListComponent v-for="(user, index) in users" :key="user.id" :user=user :index=index
-                  @user-deleted="userDeleted" />
+                  @edit-user="editUser" @user-deleted="userDeleted" />
               </tbody>
             </table>
           </div>
