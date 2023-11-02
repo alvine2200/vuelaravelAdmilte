@@ -165,7 +165,7 @@ onMounted(() => {
                   <td>{{ user.name }}</td>
                   <td>{{ user.email }}</td>
                   <td>{{ formatDate(user.created_at) }}</td>
-                  <td></td>
+                  <td>{{ user.role }}</td>
                   <td>
                     <a @click.prevent="editUser(user)"><i class="fa fa-edit mr-2"></i></a>
                     <a @click.prevent="showDeleteUserModal(user)"><i class="fa fa-trash"></i></a>
