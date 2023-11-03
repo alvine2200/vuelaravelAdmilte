@@ -61,9 +61,11 @@ class UserController extends Controller
         return $user;
     }
 
-    public function delete(User $user)
+    public function delete(Request $request)
     {
-        $user->delete();
+        $user_id = $request->userId;
+        dd($user_id);
+        $user = User::find($user_id)->delete();
         return response()->noContent();
     }
 
@@ -76,5 +78,11 @@ class UserController extends Controller
         return response()->json([
             'success' => true,
         ]);
+    }
+
+    public function search(Request $request)
+    {
+        $users = User::where('name', 'like', "%{$request->query}%")->get();
+        return response()->json($users);
     }
 }

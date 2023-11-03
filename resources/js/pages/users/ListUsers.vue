@@ -1,10 +1,11 @@
 <script setup>
 import axios from "axios";
-import { ref, onMounted, reactive } from "vue";
+import { ref, onMounted, reactive, watch } from "vue";
 import { Form, Field } from 'vee-validate';
 import * as yup from 'yup';
 import { useToastr } from '../../toastr.js';
 import UserListComponent from "./UserListComponent.vue";
+import { debounce } from 'lodash';
 
 const toastr = useToastr();
 const users = ref([]);
@@ -97,6 +98,25 @@ const userDeleted = (userId) => {
   users.value = users.value.filter(user => user.id !== userId)
 }
 
+
+const searchQuery = ref(null);
+
+const search = () => {
+  axios.get('/api/users/search', {
+    params: {
+      query: searchQuery.value,
+    }
+  }).then((response) => {
+    users.value = response.data;
+  }).catch((error) => {
+    console.log(error);
+  });
+}
+
+watch(searchQuery, debounce(() => {
+  search();
+}));
+
 onMounted(() => {
   getUsers();
 });
@@ -121,10 +141,13 @@ onMounted(() => {
 
   <div class="content">
     <div class="container-fluid">
-      <div class="button mx-3 mb-3 row">
+      <div class="button mx-3 mb-3 row d-flex justify-content-between">
         <button type="button" class="btn btn-primary float-end" @click="adduser"><i class="fas fa-plus-circle"></i> Add
           New User
         </button>
+        <div>
+          <input type="text" v-model="searchQuery" class="form-control" placeholder="search...">
+        </div>
       </div>
       <div class="card">
         <div class="card-body">
@@ -140,9 +163,14 @@ onMounted(() => {
                   <th>Actions</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody v-if="users.length > 0">
                 <UserListComponent v-for="(user, index) in users" :key="user.id" :user=user :index=index
                   @edit-user="editUser" @user-deleted="userDeleted" />
+              </tbody>
+              <tbody v-else>
+                <tr>
+                  <td colspan="6" class="text-center">No Results Found</td>
+                </tr>
               </tbody>
             </table>
           </div>

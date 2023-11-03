@@ -32,8 +32,11 @@ const editUser = (user) => {
 }
 
 const deleteUser = (user) => {
-    axios.delete('/api/users/' + user.id)
+    axios.post('/api/users/' + user.id, {
+        userId: user.id,
+    })
         .then(() => {
+            console.log(user);
             $('#deleteUserModal').modal('hide');
             toastr.success("User deleted successfully!");
             emit('userDeleted', userIdBeingDeleted.value); // Use userIdBeingDeleted.value
