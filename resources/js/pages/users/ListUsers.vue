@@ -37,6 +37,8 @@ const getUsers = (page = 1) => {
   axios.get(`/api/users?page=${page}`)
     .then((response) => {
       users.value = response.data;
+      selectAll.value = false;
+      selectedUsers.value = [];
     })
 };
 
@@ -54,7 +56,7 @@ const handleSubmit = (values, actions) => {
 const createUser = (values, { resetForm, setErrors }) => {
   axios.post('/api/users', values)
     .then((response) => {
-      users.value.unshift(response.data);
+      users.value.data.unshift(response.data);
       $('#userFormModal').modal('hide');
       toastr.success("User added successfully");
       resetForm();
@@ -152,7 +154,7 @@ const selectAllUsers = () => {
   } else {
     selectedUsers.value = [];
   }
-  console.log(selectedUsers.value);
+  // console.log(selectedUsers.value);
 }
 
 watch(searchQuery, debounce(() => {
@@ -185,11 +187,13 @@ onMounted(() => {
     <div class="container-fluid">
       <div class="button mx-3 mb-3 row d-flex justify-content-between">
         <div>
-          <button type="button" class="btn btn-primary" @click="adduser"><i class="fas fa-plus-circle"></i> Add
+          <button type="button" class="btn btn-primary" @click="adduser"><i class="fas fa-plus-circle mr-1"></i> Add
             New User
           </button>
-          <button v-if="selectedUsers.length > 0" type="button" class="btn btn-danger ml-2" @click="bulkDelete">Delete
+          <button v-if="selectedUsers.length > 0" type="button" class="btn btn-danger ml-2" @click="bulkDelete"> <i
+              class="fa fa-trash mr-1"></i>Delete
             selected</button>
+          <span class="user-present ml-2" v-if="selectedUsers.length > 0">Selected {{ selectedUsers.length }} Users</span>
         </div>
         <div>
           <input type="text" v-model="searchQuery" class="form-control" placeholder="search...">
