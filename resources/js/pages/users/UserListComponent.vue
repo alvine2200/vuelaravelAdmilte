@@ -4,14 +4,15 @@ import { formatDate } from '../../helper';
 import { useToastr } from '../../toastr';
 import { ref } from 'vue';
 
-defineProps({
+const props = defineProps({
     user: Object,
     index: Number,
+    selectAll: Boolean,
 })
 
 const toastr = useToastr();
 const userIdBeingDeleted = ref(null);
-const emit = defineEmits(['userDeleted', 'editUser']);
+const emit = defineEmits(['userDeleted', 'editUser', 'toggleSelection']);
 const roles = ref([
     {
         name: 'ADMIN',
@@ -62,6 +63,9 @@ const changeRole = (user, role) => {
 
 <template>
     <tr>
+        <td>
+            <input @change="$emit('toggleSelection', props.user)" :checked="selectAll" type="checkbox" class="form-control">
+        </td>
         <td>{{ index + 1 }}</td>
         <td>{{ user.name }}</td>
         <td>{{ user.email }}</td>

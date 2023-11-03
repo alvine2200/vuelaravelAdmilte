@@ -116,6 +116,45 @@ const search = () => {
   });
 }
 
+const selectedUsers = ref([]);
+const toggleSelection = (user) => {
+  const index = selectedUsers.value.indexOf(user.id);
+  if (index === -1) {
+    selectedUsers.value.push(user.id);
+  } else {
+    selectedUsers.value.splice(index, 1);
+  }
+  console.log(selectedUsers.value);
+}
+
+const bulkDelete = () => {
+  axios.delete('/api/users', {
+    data: {
+      ids: selectedUsers.value,
+    }
+  })
+    .then((response) => {
+      users.value.data = users.value.data.filter(user => !selectedUsers.value.includes(user.id));
+      selectedUsers.value = [];
+      selectAll.value = false;
+      toastr.success(response.data.message);
+    })
+    .catch((error) => {
+      toastr.error("Unknown Error occur during deletion");
+    })
+}
+
+const selectAll = ref(false);
+
+const selectAllUsers = () => {
+  if (selectAll.value) {
+    selectedUsers.value = users.value.data.map(user => user.id);
+  } else {
+    selectedUsers.value = [];
+  }
+  console.log(selectedUsers.value);
+}
+
 watch(searchQuery, debounce(() => {
   search();
 }));
@@ -145,9 +184,13 @@ onMounted(() => {
   <div class="content">
     <div class="container-fluid">
       <div class="button mx-3 mb-3 row d-flex justify-content-between">
-        <button type="button" class="btn btn-primary float-end" @click="adduser"><i class="fas fa-plus-circle"></i> Add
-          New User
-        </button>
+        <div>
+          <button type="button" class="btn btn-primary" @click="adduser"><i class="fas fa-plus-circle"></i> Add
+            New User
+          </button>
+          <button v-if="selectedUsers.length > 0" type="button" class="btn btn-danger ml-2" @click="bulkDelete">Delete
+            selected</button>
+        </div>
         <div>
           <input type="text" v-model="searchQuery" class="form-control" placeholder="search...">
         </div>
@@ -158,6 +201,9 @@ onMounted(() => {
             <table class="table table-bordered table-striped">
               <thead>
                 <tr>
+                  <th>
+                    <input type="checkbox" v-model="selectAll" @change="selectAllUsers" class="form-control">
+                  </th>
                   <th style="width: 15px">#</th>
                   <th>Name</th>
                   <th>Email</th>
@@ -168,7 +214,8 @@ onMounted(() => {
               </thead>
               <tbody v-if="users.data.length > 0">
                 <UserListComponent v-for="(user, index) in users.data" :key="user.id" :user=user :index=index
-                  @edit-user="editUser" @user-deleted="userDeleted" />
+                  @edit-user="editUser" @user-deleted="userDeleted" @toggle-selection="toggleSelection"
+                  :select-all="selectAll" />
               </tbody>
               <tbody v-else>
                 <tr>
