@@ -11,7 +11,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::latest()->get();
+        $users = User::latest()->paginate(5);
         return $users;
     }
 
@@ -78,7 +78,7 @@ class UserController extends Controller
 
     public function search(Request $request)
     {
-        $users = User::where('name', 'like', "%{$request['query']}%")->get();
+        $users = User::where('name', 'like', "%{$request['query']}%")->paginate(5);
         return response()->json($users);
     }
 }
