@@ -34,7 +34,7 @@ const editUserSchema = yup.object({
 
 // fetch users
 const getUsers = (page = 1) => {
-  axios.get(`/api/users?page=${page}`)
+  axios.get(`/api/users?=page${page}`)
     .then((response) => {
       users.value = response.data;
       selectAll.value = false;

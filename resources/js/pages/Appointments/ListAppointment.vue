@@ -1,3 +1,28 @@
+<script setup>
+import { useToastr } from '../../toastr.js';
+import { ref, onMounted } from 'vue';
+import { formatDate } from '../../helper.js';
+import { Bootstrap4Pagination } from 'laravel-vue-pagination';
+
+const toastr = useToastr();
+const appointments = ref({ 'data': [] });
+
+const getAllAppointments = (page = 1) => {
+    axios.get(`/api/appointments?page=${page}`)
+        .then((response) => {
+            appointments.value = response.data;
+            console.log(appointments.value);
+        })
+        .catch((error) => {
+            toastr.error("Error occurred during fetch");
+        });
+}
+
+onMounted(() => {
+    getAllAppointments();
+});
+</script>
+
 <template>
     <div class="content-header">
         <div class="container-fluid">
@@ -57,10 +82,10 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Mr. Martin Glover MD</td>
-                                        <td>2023-01-27</td>
+                                    <tr v-for="(appointment, index) in appointments.data" :key="appointment.id">
+                                        <td>{{ index + 1 }}</td>
+                                        <td>{{ appointment.client.first_name }} {{ appointment.client.last_name }}</td>
+                                        <td>{{ formatDate(appointment.created_at) }}</td>
                                         <td>05:40 PM</td>
                                         <td>
                                             <span class="badge badge-success">closed</span>
@@ -78,6 +103,7 @@
                             </table>
                         </div>
                     </div>
+                    <Bootstrap4Pagination class="mx-2" :data="appointments" @pagination-change-page="getAllAppointments" />
                 </div>
             </div>
         </div>
