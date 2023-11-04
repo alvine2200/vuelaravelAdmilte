@@ -11,7 +11,7 @@ const getAllAppointments = (page = 1) => {
     axios.get(`/api/appointments?page=${page}`)
         .then((response) => {
             appointments.value = response.data;
-            console.log(appointments.value);
+            // console.log(appointments.value);
         })
         .catch((error) => {
             toastr.error("Error occurred during fetch");
@@ -85,10 +85,11 @@ onMounted(() => {
                                     <tr v-for="(appointment, index) in appointments.data" :key="appointment.id">
                                         <td>{{ index + 1 }}</td>
                                         <td>{{ appointment.client.first_name }} {{ appointment.client.last_name }}</td>
-                                        <td>{{ formatDate(appointment.created_at) }}</td>
-                                        <td>05:40 PM</td>
+                                        <td>{{ formatDate(appointment.start_time) }}</td>
+                                        <td>{{ formatDate(appointment.end_time) }}</td>
                                         <td>
-                                            <span class="badge badge-success">closed</span>
+                                            <span class="badge" :class="`badge-${appointment.status.color}`">{{
+                                                appointment.status.name }}</span>
                                         </td>
                                         <td>
                                             <a href="javascript:void()">
