@@ -7,8 +7,15 @@ import { Bootstrap4Pagination } from 'laravel-vue-pagination';
 const toastr = useToastr();
 const appointments = ref({ 'data': [] });
 
-const getAllAppointments = (page = 1) => {
-    axios.get(`/api/appointments?page=${page}`)
+const Appointmentstatus = { 'scheduled': 1, 'confirmed': 2, 'cancelled': 3 }
+const getAllAppointments = (status, page = 1) => {
+    const params = {};
+    if (status) {
+        params.status = status;
+    }
+    axios.get(`/api/appointments?page=${page}`, {
+        params: params,
+    })
         .then((response) => {
             appointments.value = response.data;
             // console.log(appointments.value);
@@ -17,6 +24,8 @@ const getAllAppointments = (page = 1) => {
             toastr.error("Error occurred during fetch");
         });
 }
+
+
 
 onMounted(() => {
     getAllAppointments();
@@ -54,17 +63,25 @@ onMounted(() => {
                         <div class="btn-group">
                             <button type="button" class="btn btn-secondary">
                                 <span class="mr-1">All</span>
-                                <span class="badge badge-pill badge-info">1</span>
+                                <span class="badge badge-pill badge-info">0</span>
                             </button>
 
-                            <button type="button" class="btn btn-default">
+                            <button @click="getAllAppointments(Appointmentstatus.scheduled)" type="button"
+                                class="btn btn-default">
                                 <span class="mr-1">Scheduled</span>
                                 <span class="badge badge-pill badge-primary">0</span>
                             </button>
 
-                            <button type="button" class="btn btn-default">
-                                <span class="mr-1">Closed</span>
-                                <span class="badge badge-pill badge-success">1</span>
+                            <button @click="getAllAppointments(Appointmentstatus.confirmed)" type="button"
+                                class="btn btn-default">
+                                <span class="mr-1">Confirmed</span>
+                                <span class="badge badge-pill badge-success">0</span>
+                            </button>
+
+                            <button @click="getAllAppointments(Appointmentstatus.cancelled)" type="button"
+                                class="btn btn-default">
+                                <span class="mr-1">Cancelled</span>
+                                <span class="badge badge-pill badge-danger">0</span>
                             </button>
                         </div>
                     </div>
