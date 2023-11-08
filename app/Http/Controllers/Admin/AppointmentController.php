@@ -41,6 +41,7 @@ class AppointmentController extends Controller
                 'name' => $status->name,
                 'value' => $status->value,
                 'color' => AppointmentStatus::from($status->value)->color(),
+                'count' => Appointment::where('status', $status->value)->count(),
             ];
         });
     }

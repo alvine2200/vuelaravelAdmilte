@@ -99,11 +99,6 @@ const editUser = (user) => {
   }
 }
 
-const userDeleted = (userId) => {
-  users.value = users.value.filter(user => user.id !== userId)
-}
-
-
 const searchQuery = ref(null);
 
 const search = () => {
@@ -160,6 +155,30 @@ const selectAllUsers = () => {
 watch(searchQuery, debounce(() => {
   search();
 }));
+
+
+const userIdBeingDeleted = ref(null);
+
+const confirmUserDeletion = (id) => {
+  userIdBeingDeleted.value = id;
+  $('#deleteUserModal').modal('show');
+}
+
+const deleteUser = () => {
+  axios.post('/api/users/' + userIdBeingDeleted.value, {
+    userId: userIdBeingDeleted.value,
+  })
+    .then(() => {
+      console.log(userIdBeingDeleted.value);
+      users.value.data = users.value.data.filter(user => user.id !== userIdBeingDeleted.value)
+      $('#deleteUserModal').modal('hide');
+      toastr.success("User deleted successfully!");
+    })
+}
+
+const hideDeleteUserModal = () => {
+  $('#deleteUserModal').modal('hide');
+}
 
 onMounted(() => {
   getUsers();
@@ -218,7 +237,7 @@ onMounted(() => {
               </thead>
               <tbody v-if="users.data.length > 0">
                 <UserListComponent v-for="(user, index) in users.data" :key="user.id" :user=user :index=index
-                  @edit-user="editUser" @user-deleted="userDeleted" @toggle-selection="toggleSelection"
+                  @edit-user="editUser" @confirm-user-deletion="confirmUserDeletion" @toggle-selection="toggleSelection"
                   :select-all="selectAll" />
               </tbody>
               <tbody v-else>
@@ -272,6 +291,29 @@ onMounted(() => {
             <button type="submit" class="btn btn-primary">Submit</button>
           </div>
         </Form>
+      </div>
+    </div>
+  </div>
+
+  <!-- modal for deleting user -->
+  <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">
+            <span>Delete User</span>
+          </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h5>Are You Sure You Want To Delete This? </h5>
+        </div>
+        <div class="modal-footer">
+          <button @click.prevent="hideDeleteUserModal" class="btn btn-secondary" type="button">Close</button>
+          <button @click.prevent="deleteUser(user)" class="btn btn-primary" type="button">Delete</button>
+        </div>
       </div>
     </div>
   </div>

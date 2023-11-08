@@ -1,6 +1,6 @@
 <script setup>
 import { useToastr } from '../../toastr.js';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { formatDate } from '../../helper.js';
 import { Bootstrap4Pagination } from 'laravel-vue-pagination';
 import axios from 'axios';
@@ -9,6 +9,7 @@ const toastr = useToastr();
 const appointments = ref({ 'data': [] });
 
 const Appointmentstatus = ref([]);
+const selectedStatus = ref();
 const getAllAppointments = (status, page = 1) => {
     const params = {};
     if (status) {
@@ -18,6 +19,7 @@ const getAllAppointments = (status, page = 1) => {
         params: params,
     })
         .then((response) => {
+            selectedStatus.value = status;
             appointments.value = response.data;
             // console.log(appointments.value);
         })
@@ -35,6 +37,10 @@ const getAppointmentStatus = () => {
             console.log(error);
         });
 }
+
+const appointmentCount = computed(() => {
+    return Appointmentstatus.value.map(status => status.count).reduce((acc, value) => acc + value, 0);
+})
 
 onMounted(() => {
     getAllAppointments();
@@ -71,28 +77,18 @@ onMounted(() => {
                             </a>
                         </div>
                         <div class="btn-group">
-                            <button type="button" class="btn btn-secondary">
+                            <button type="button" class="btn"
+                                :class="[typeof selectedStatus === 'undefined' ? 'btn-secondary' : 'btn-default']">
                                 <span class="mr-1">All</span>
-                                <span class="badge badge-pill badge-info">0</span>
+                                <span class="badge badge-pill badge-info">{{ appointmentCount }}</span>
                             </button>
 
-                            <button v-for="status in Appointmentstatus" @click="getAllAppointments()" :key="status.id"
-                                type="button" class="btn btn-default">
+                            <button v-for="status in  Appointmentstatus " @click="getAllAppointments(status.value)"
+                                :key="status.id" type="button" class="btn"
+                                :class="[selectedStatus === status.value ? 'btn-secondary' : 'btn-default']">
                                 <span class="mr-1">{{ status.name }}</span>
-                                <span class="badge badge-pill badge-primary">0</span>
+                                <span class="badge badge-pill" :class="`badge-${status.color}`">{{ status.count }}</span>
                             </button>
-
-                            <!-- <button @click="getAllAppointments(Appointmentstatus.confirmed)" type="button"
-                                class="btn btn-default">
-                                <span class="mr-1">Confirmed</span>
-                                <span class="badge badge-pill badge-success">0</span>
-                            </button>
-
-                            <button @click="getAllAppointments(Appointmentstatus.cancelled)" type="button"
-                                class="btn btn-default">
-                                <span class="mr-1">Cancelled</span>
-                                <span class="badge badge-pill badge-danger">0</span>
-                            </button> -->
                         </div>
                     </div>
                     <div class="card">
@@ -109,7 +105,7 @@ onMounted(() => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="(appointment, index) in appointments.data" :key="appointment.id">
+                                    <tr v-for="( appointment, index ) in  appointments.data " :key="appointment.id">
                                         <td>{{ index + 1 }}</td>
                                         <td>{{ appointment.client.first_name }} {{ appointment.client.last_name }}</td>
                                         <td>{{ formatDate(appointment.start_time) }}</td>
