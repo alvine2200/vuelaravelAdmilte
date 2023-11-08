@@ -48,6 +48,14 @@ class AppointmentController extends Controller
 
     public function createAppointment(Request $request)
     {
+        $request->validate([
+            'title' => 'required|string',
+            'description' => 'required|string',
+            'client' => 'required|string',
+            'date' => 'required|date',
+            'time' => 'required',
+        ]);
+
         return Appointment::create([
             'client_id' => 1,
             'title' => $request->title,
