@@ -45,4 +45,16 @@ class AppointmentController extends Controller
             ];
         });
     }
+
+    public function createAppointment(Request $request)
+    {
+        return Appointment::create([
+            'client_id' => 1,
+            'title' => $request->title,
+            'description' => $request->description,
+            'start_time' => now(),
+            'end_time' => now()->addHours(2),
+            'status' => AppointmentStatus::SCHEDULE,
+        ]);
+    }
 }

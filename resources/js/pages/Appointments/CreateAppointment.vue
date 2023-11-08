@@ -1,5 +1,29 @@
 <script setup>
-//
+import axios from 'axios';
+import { reactive } from 'vue';
+import { useToastr } from '../../toastr';
+import { useRouter } from 'vue-router';
+
+const toastr = useToastr();
+const router = useRouter();
+const form = reactive({
+    'title': '',
+    'client': '',
+    'date': '',
+    'time': '',
+    'description': '',
+});
+
+const handleSubmit = () => {
+    axios.post('/api/appointments/create', form)
+        .then((response) => {
+            router.push('/admin/appointments');
+            toastr.success("Appointment Created Successfully");
+        })
+        .catch((error) => {
+
+        });
+}
 </script>
 <template>
     <div class="content-header">
@@ -10,7 +34,7 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><route-link to="">Home</route-link></li>
+                        <li class="breadcrumb-item"><route-link to="/admin/dashboard">Home</route-link></li>
                         <li class="breadcrumb-item"><router-link to="/admin/appointments">Appointment</router-link>
                         </li>
                         <li class="breadcrumb-item active">Home</li>
@@ -26,32 +50,32 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                            <form>
+                            <form @submit.prevent="handleSubmit()">
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="title">Title</label>
-                                        <input type="text" v-model="title" name="title" class="form-control" id="title">
+                                        <input type="text" v-model="form.title" class="form-control" id="title">
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="client">Client Name</label>
-                                        <select type="text" v-model="client" name="client" class="form-control" id="client">
+                                        <select type="text" class="form-control" id="client">
                                             <option>Client One</option>
                                             <option>Client Two</option>
                                         </select>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="date">Appointment Date</label>
-                                        <input type="date" v-model="date" name="date" class="form-control" id="date">
+                                        <input type="date" class="form-control" id="date">
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="time">Appointment Time</label>
-                                        <input type="time" v-model="time" name="time" class="form-control" id="time">
+                                        <input type="time" class="form-control" id="time">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12 mb-3">
                                         <label for="decription">Description</label>
-                                        <textarea name="description" class="form-control" id="description" cols="30"
+                                        <textarea v-model="form.description" class="form-control" id="description" cols="30"
                                             rows="5"></textarea>
                                     </div>
                                 </div>

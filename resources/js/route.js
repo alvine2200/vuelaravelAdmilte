@@ -17,7 +17,7 @@ export default [
         component: ListAppointment,
     },
     {
-        path: "/admin/appointment/create",
+        path: "/admin/appointments/create",
         name: "admin.appointments.create",
         component: CreateAppointment,
     },
