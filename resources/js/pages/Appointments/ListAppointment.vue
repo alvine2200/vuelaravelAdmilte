@@ -3,11 +3,12 @@ import { useToastr } from '../../toastr.js';
 import { ref, onMounted } from 'vue';
 import { formatDate } from '../../helper.js';
 import { Bootstrap4Pagination } from 'laravel-vue-pagination';
+import axios from 'axios';
 
 const toastr = useToastr();
 const appointments = ref({ 'data': [] });
 
-const Appointmentstatus = { 'scheduled': 1, 'confirmed': 2, 'cancelled': 3 }
+const Appointmentstatus = ref([]);
 const getAllAppointments = (status, page = 1) => {
     const params = {};
     if (status) {
@@ -25,10 +26,19 @@ const getAllAppointments = (status, page = 1) => {
         });
 }
 
-
+const getAppointmentStatus = () => {
+    axios.get('/api/appointment-status')
+        .then((response) => {
+            Appointmentstatus.value = response.data;
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+}
 
 onMounted(() => {
     getAllAppointments();
+    getAppointmentStatus();
 });
 </script>
 
@@ -66,13 +76,13 @@ onMounted(() => {
                                 <span class="badge badge-pill badge-info">0</span>
                             </button>
 
-                            <button @click="getAllAppointments(Appointmentstatus.scheduled)" type="button"
-                                class="btn btn-default">
-                                <span class="mr-1">Scheduled</span>
+                            <button v-for="status in Appointmentstatus" @click="getAllAppointments()" :key="status.id"
+                                type="button" class="btn btn-default">
+                                <span class="mr-1">{{ status.name }}</span>
                                 <span class="badge badge-pill badge-primary">0</span>
                             </button>
 
-                            <button @click="getAllAppointments(Appointmentstatus.confirmed)" type="button"
+                            <!-- <button @click="getAllAppointments(Appointmentstatus.confirmed)" type="button"
                                 class="btn btn-default">
                                 <span class="mr-1">Confirmed</span>
                                 <span class="badge badge-pill badge-success">0</span>
@@ -82,7 +92,7 @@ onMounted(() => {
                                 class="btn btn-default">
                                 <span class="mr-1">Cancelled</span>
                                 <span class="badge badge-pill badge-danger">0</span>
-                            </button>
+                            </button> -->
                         </div>
                     </div>
                     <div class="card">

@@ -31,4 +31,17 @@ class AppointmentController extends Controller
             });
         return $appointments;
     }
+
+    public function fetchAppointments()
+    {
+        $cases = AppointmentStatus::cases();
+
+        return collect($cases)->map(function ($status) {
+            return [
+                'name' => $status->name,
+                'value' => $status->value,
+                'color' => AppointmentStatus::from($status->value)->color(),
+            ];
+        });
+    }
 }
