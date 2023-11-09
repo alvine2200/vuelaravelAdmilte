@@ -65,4 +65,9 @@ class AppointmentController extends Controller
             'status' => AppointmentStatus::SCHEDULE,
         ]);
     }
+
+    public function editAppointment(Appointment $appointment)
+    {
+        return $appointment->with('client:id,name')->get();
+    }
 }

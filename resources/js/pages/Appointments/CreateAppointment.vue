@@ -2,11 +2,12 @@
 import axios from 'axios';
 import { onMounted, reactive } from 'vue';
 import { useToastr } from '../../toastr';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { Form } from 'vee-validate';
 
 const toastr = useToastr();
 const router = useRouter();
+const route = useRoute();
 const editMode = ref(false);
 
 
@@ -29,9 +30,24 @@ const handleSubmit = (values, actions) => {
         });
 }
 
+const getAppointment = () => {
+    axios.get(`/admin/appointments/${route.params.id}/edit`)
+        .then((response) => {
+            form.title = response.data.title;
+            form.client = response.data.clients.name;
+            form.date = response.data.formatted_start_time;
+            form.time = response.data.formatted_end_time;
+            form.description = response.data.description;
+        })
+        .catch((error) => {
+            
+        })
+}
+
 onMounted(() => {
-    if (router.currentRoute.value.name === "admin.appointments.edit") {
+    if (route.name === "admin.appointments.edit") {
         editMode.value = true;
+        getAppointment();
     }
 });
 </script>
@@ -44,10 +60,15 @@ onMounted(() => {
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><router-link to="/admin/dashboard">Home</router-link></li>
-                        <li class="breadcrumb-item"><router-link to="/admin/appointments">Appointment</router-link>
+                        <li class="breadcrumb-item">
+                            <router-link to="/admin/dashboard">Home</router-link>
                         </li>
-                        <li class="breadcrumb-item active">Home</li>
+                        <li class="breadcrumb-item">
+                            <router-link to="/admin/appointments">Appointment</router-link>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            <span v-if="editMode">Edit</span> <span v-else>Create</span>
+                        </li>
                     </ol>
                 </div>
             </div>
