@@ -115,9 +115,9 @@ onMounted(() => {
                                                 appointment.status.name }}</span>
                                         </td>
                                         <td>
-                                            <a href="javascript:void()">
+                                            <router-link to="`/admin/appointments/${appointment.id}/edit`">
                                                 <i class="fa fa-edit mr-2"></i>
-                                            </a>
+                                            </router-link>
                                             <a href="javascript:void()">
                                                 <i class="fa fa-trash text-danger"></i>
                                             </a>
