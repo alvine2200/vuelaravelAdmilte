@@ -1,6 +1,6 @@
 <script setup>
 import axios from 'axios';
-import { onMounted, reactive } from 'vue';
+import { onMounted, ref, reactive } from 'vue';
 import { useToastr } from '../../toastr';
 import { useRoute, useRouter } from 'vue-router';
 import { Form } from 'vee-validate';
@@ -20,6 +20,10 @@ const form = reactive({
 });
 
 const handleSubmit = (values, actions) => {
+    editMode.value ? updateAppointment(values, actions) : createAppointment(values, actions);
+}
+
+const createAppointment = (values, actions) => {
     axios.post('/api/appointments/create', form)
         .then((response) => {
             router.push('/admin/appointments');
@@ -30,17 +34,28 @@ const handleSubmit = (values, actions) => {
         });
 }
 
+const updateAppointment = (values, actions) => {
+    axios.post(`/api/appointments/${route.params.id}/update`, form)
+        .then((response) => {
+            router.push('/admin/appointments');
+            toastr.success("Appointment Updated Successfully");
+        })
+        .catch((error) => {
+            actions.setErrors(error.response.data.errors);
+        })
+}
+
 const getAppointment = () => {
     axios.get(`/admin/appointments/${route.params.id}/edit`)
         .then((response) => {
             form.title = response.data.title;
-            form.client = response.data.clients.name;
+            // form.client = response.data.client;
             form.date = response.data.formatted_start_time;
             form.time = response.data.formatted_end_time;
             form.description = response.data.description;
         })
         .catch((error) => {
-            
+            console.log(error);
         })
 }
 

@@ -1,21 +1,30 @@
 <script setup>
 import { useToastr } from '../../toastr.js';
-import { ref, onMounted, computed } from 'vue';
+import { defineEmits, ref, onMounted, computed } from 'vue';
 import { formatDate } from '../../helper.js';
 import { Bootstrap4Pagination } from 'laravel-vue-pagination';
 import axios from 'axios';
 
 const toastr = useToastr();
-const appointments = ref({ 'data': [] });
+const appointment = ref([]);
+const appointments = ref([]);
+const emit = defineEmits(['confirmAppointmentDelete']);
+
+const confirmAppointmentDelete = (appointmentId) => {
+    appointment.value = appointmentId;
+    alert(appointmentId);
+}
 
 const Appointmentstatus = ref([]);
 const selectedStatus = ref();
-const getAllAppointments = (status, page = 1) => {
+
+
+const getAllAppointments = (status) => {
     const params = {};
     if (status) {
         params.status = status;
     }
-    axios.get(`/api/appointments?page=${page}`, {
+    axios.get(`/api/appointments`, {
         params: params,
     })
         .then((response) => {
@@ -115,10 +124,10 @@ onMounted(() => {
                                                 appointment.status.name }}</span>
                                         </td>
                                         <td>
-                                            <router-link to="`/admin/appointments/${appointment.id}/edit`">
+                                            <router-link :to="`/admin/appointments/${appointment.id}/edit`">
                                                 <i class="fa fa-edit mr-2"></i>
                                             </router-link>
-                                            <a href="javascript:void()">
+                                            <a @click="$emit('confirmAppointmentDelete', appointment.id)">
                                                 <i class="fa fa-trash text-danger"></i>
                                             </a>
                                         </td>
@@ -127,7 +136,7 @@ onMounted(() => {
                             </table>
                         </div>
                     </div>
-                    <Bootstrap4Pagination class="mx-2" :data="appointments" @pagination-change-page="getAllAppointments" />
+                    <!-- <Bootstrap4Pagination class="mx-2" :data="appointments" @pagination-change-page="getAllAppointments" /> -->
                 </div>
             </div>
         </div>

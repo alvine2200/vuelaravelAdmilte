@@ -16,7 +16,7 @@ class AppointmentController extends Controller
                 $query->where('status', AppointmentStatus::from($request->status));
             })
             ->latest()
-            ->paginate(4)
+            ->paginate()
             ->through(function ($appointment) {
                 return [
                     'status' => [
@@ -68,6 +68,26 @@ class AppointmentController extends Controller
 
     public function editAppointment(Appointment $appointment)
     {
-        return $appointment->with('client:id,name')->get();
+        return $appointment;
+    }
+
+    public function updateAppointment(Appointment $appointment, Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string',
+            'description' => 'required|string',
+            'client' => 'required|string',
+            'date' => 'required|date',
+            'time' => 'required',
+        ]);
+
+        return $appointment->update([
+            'client_id' => 2,
+            'title' => $request->title,
+            'description' => $request->description,
+            'start_time' => now(),
+            'end_time' => now()->addHours(2),
+            'status' => AppointmentStatus::SCHEDULE,
+        ]);
     }
 }
