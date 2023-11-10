@@ -90,4 +90,10 @@ class AppointmentController extends Controller
             'status' => AppointmentStatus::SCHEDULE,
         ]);
     }
+
+    public function deleteAppointment(Appointment $appointment)
+    {
+        $appointment->delete();
+        return response()->noContent();
+    }
 }

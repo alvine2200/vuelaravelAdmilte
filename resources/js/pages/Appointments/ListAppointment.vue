@@ -1,18 +1,48 @@
 <script setup>
 import { useToastr } from '../../toastr.js';
-import { defineEmits, ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { formatDate } from '../../helper.js';
 import { Bootstrap4Pagination } from 'laravel-vue-pagination';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const toastr = useToastr();
 const appointment = ref([]);
 const appointments = ref([]);
-const emit = defineEmits(['confirmAppointmentDelete']);
+
 
 const confirmAppointmentDelete = (appointmentId) => {
     appointment.value = appointmentId;
-    alert(appointmentId);
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            axios.delete(`/api/appointments/${appointmentId}/delete`)
+                .then((response) => {
+                    appointments.value.data = appointments.value.data.filter(appointment => appointment.id != appointmentId);
+                    Swal.fire({
+                        title: "Deleted!",
+                        text: "Your file has been deleted.",
+                        icon: "success"
+                    });
+                })
+                .catch((error) => {
+                    Swal.fire({
+                        title: "Not Deleted!",
+                        text: "Something went wrong.",
+                        icon: "error"
+                    });
+                    // toastr.error('Something Went wrong!');
+                })
+
+        }
+    });
 }
 
 const Appointmentstatus = ref([]);
@@ -127,7 +157,7 @@ onMounted(() => {
                                             <router-link :to="`/admin/appointments/${appointment.id}/edit`">
                                                 <i class="fa fa-edit mr-2"></i>
                                             </router-link>
-                                            <a @click="$emit('confirmAppointmentDelete', appointment.id)">
+                                            <a @click.prevent=confirmAppointmentDelete(appointment.id)>
                                                 <i class="fa fa-trash text-danger"></i>
                                             </a>
                                         </td>
