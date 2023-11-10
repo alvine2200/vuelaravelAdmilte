@@ -4,8 +4,14 @@ import CreateAppointment from "./pages/Appointments/CreateAppointment.vue";
 import ListUsers from "./pages/users/ListUsers.vue";
 import Settings from "./pages/settings/Settings.vue";
 import Profile from "./pages/profile/Profile.vue";
+import Login from "./pages/auth/Login.vue";
 
 export default [
+    {
+        path: "/login",
+        name: "admin.login",
+        component: Login,
+    },
     {
         path: "/admin/dashboard",
         name: "admin.dashboard",
