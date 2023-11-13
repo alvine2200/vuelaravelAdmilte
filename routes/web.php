@@ -7,6 +7,9 @@ use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\Admin\AppointmentController;
 
 
+// Route::get('/login', function () {
+//     return view('auth.login');
+// });
 // Auth::routes();
 Route::middleware('auth')->group(function () {
     Route::get('/api/users', [UserController::class, 'index']);

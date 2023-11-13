@@ -35,10 +35,9 @@
 </style>
 
 <body>
-    <div id="app">
-        <router-view>
-            {{-- <Login /> --}}
-        </router-view>
+    <div id="login">
+        hello there
+        <Login />
     </div>
 </body>
 

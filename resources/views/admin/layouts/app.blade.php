@@ -10,13 +10,13 @@
 </head>
 
 <body class="hold-transition sidebar-mini">
-    <div id="app" class="wrapper">
+    <div class="wrapper">
 
         @include('admin.layouts.header')
         @include('admin.layouts.sidebar')
 
         <div class="content-wrapper">
-            <router-view></router-view>
+            {{-- <router-view></router-view> --}}
         </div>
 
         <aside class="control-sidebar control-sidebar-dark">
