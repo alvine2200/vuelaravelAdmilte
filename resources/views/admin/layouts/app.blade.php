@@ -10,7 +10,7 @@
 </head>
 
 <body class="hold-transition sidebar-mini">
-    <div class="wrapper">
+    <div id="app" class="wrapper">
 
         @include('admin.layouts.header')
         @include('admin.layouts.sidebar')
